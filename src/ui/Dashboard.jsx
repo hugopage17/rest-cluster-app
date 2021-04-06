@@ -52,7 +52,8 @@ const styles = {
     position:'absolute',
     left:'20%',
     top:'78%',
-    borderTop:'1px solid #14d4ff'
+    borderTop:'1px solid #14d4ff',
+    zIndex:-1
   },
   resHeaders:{
     position:'absolute',
