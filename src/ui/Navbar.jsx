@@ -13,9 +13,6 @@ const styles = {
 }
 
 class Navbar extends Component{
-  constructor(props){
-    super(props)
-  }
 
   render(){
     const {classes, dom} = this.props

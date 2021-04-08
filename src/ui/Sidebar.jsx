@@ -4,6 +4,7 @@ import autoBind from 'react-autobind';
 import PropTypes from 'prop-types'
 import NoDataMessage from './components/NoDataMessage.jsx'
 import TextField from '@material-ui/core/TextField'
+import History from './History/History.jsx'
 
 const styles = {
   root:{
@@ -42,6 +43,7 @@ class Sidebar extends Component{
 
   renderHistory(){
     const {classes, history} = this.props
+    console.log(history);
     if(!history || history.length === 0){
       return(
         <div className={classes.msgBoard}><NoDataMessage msg={'History Record Empty'}/></div>
@@ -53,7 +55,7 @@ class Sidebar extends Component{
           placeholder='Search...'
           className={classes.searchBar}
         />
-        {history}
+        <History history={history}/>
       </div>
     )
   }
@@ -69,6 +71,7 @@ class Sidebar extends Component{
 }
 
 Sidebar.propTypes = {
+  classes:PropTypes.object.isRequired,
   history:PropTypes.array
 }
 

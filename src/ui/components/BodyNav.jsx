@@ -18,8 +18,8 @@ const styles = {
 const BodyNav = ({classes, set}) => {
   return (
     <div className={classes.root}>
-      {['Body', 'Headers', 'Stats'].map((txt) => {
-        return <Typography className={classes.label} onClick={set}>{txt.toUpperCase() }</Typography>
+      {['Body', 'Headers', 'Stats'].map((txt, index) => {
+        return <Typography key={index} className={classes.label} onClick={set}>{txt.toUpperCase() }</Typography>
       })}
     </div>
   )

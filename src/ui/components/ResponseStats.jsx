@@ -11,10 +11,11 @@ const styles = {
 }
 
 const ResponseStats = ({classes, res}) => {
-  const color = setColor(res.status)
+  const status = res ? res.status : ''
+  const color = setColor(status)
   return(
     <div className={classes.root}>
-      <Typography style={{color:color}}>{res.status} {res.ok ? ('OK'):(null)}</Typography>
+      <Typography style={{color:color}}>{status} {(res && res.ok) ? ('OK'):(null)}</Typography>
     </div>
   )
 }

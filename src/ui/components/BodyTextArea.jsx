@@ -1,6 +1,8 @@
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import {withStyles} from '@material-ui/core/styles'
+import {bodyHandler} from '../../redux/actions.js'
+import {useSelector, useDispatch} from 'react-redux'
 
 const styles = {
   root:{
@@ -11,7 +13,10 @@ const styles = {
   }
 }
 
-const BodyTextArea = ({classes, val, setBody}) => {
+const BodyTextArea = ({classes}) => {
+  const dispatch = useDispatch()
+  const setBody = body => dispatch(bodyHandler(body))
+  const body = useSelector(state => state.body)
   return(
     <div>
       <Typography className={classes.label}>Body</Typography>
@@ -22,8 +27,8 @@ const BodyTextArea = ({classes, val, setBody}) => {
         multiline
         rows={8}
         className={classes.root}
-        value={val}
-        onChange={setBody}
+        value={body}
+        onChange={(e) => {setBody(e.target.value)}}
       />
     </div>
   )

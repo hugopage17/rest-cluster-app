@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState} from 'react';
 import EndpointUrl from './components/EndpointUrl.jsx'
 import CallButton from './components/CallButton.jsx'
 import AddQuery from './components/AddQuery.jsx'
@@ -12,6 +12,10 @@ import ResponseStats from './components/ResponseStats.jsx'
 import BodyNav from './components/BodyNav.jsx'
 import ResponseHeaders from './components/ResponseHeaders.jsx'
 import {fetchCall} from '../api/FetchCall.js'
+import {apiCall} from '../api/CallToAPI.js'
+import { useDispatch, useSelector  } from 'react-redux'
+import { queriesHandler, headersHandler, responseHandler } from '../redux/actions.js'
+import Paper from '@material-ui/core/Paper'
 
 const styles = {
   root:{
@@ -65,26 +69,37 @@ const styles = {
 }
 
 function Dashboard({classes}){
-  const [endpointUrl, setEndpoint] = useState('')
-  const [queries, setQueries] = useState([])
-  const [method, setMethod] = useState('GET')
-  const [headers, setHeaders] = useState([{key:'', value:''},{key:'', value:''},{key:'', value:''}])
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.user)
+
+  const endPointUrl = useSelector((state) => state.url)
+  const method = useSelector(state => state.method)
+
+  const setQueries = queries => dispatch(queriesHandler(queries))
+  const queries = useSelector(state => state.queries)
+
+  const setHeaders = headers => dispatch(headersHandler(headers))
+  const headers = useSelector(state => state.headers)
+
   const [bodyOption, setBodyOption] = useState(true)
-  const [bodyValue, setBodyValue] = useState('')
-  const [response, setResponse] = useState({res:{},data:''})
+
+  const setResponse = res => dispatch(responseHandler(res))
+  const response = useSelector(state => state.response)
   const [responeSec, setResSec] = useState('BODY')
 
   const renderTopSec = () => {
     return(
-      <div>
-        <div class={classes.topSec}>
-          <SelectMethod selectMethod={(e) => {setMethod(e.target.value)}} methodVal={method}/>
-          <EndpointUrl handleUrl={(e)=>{setEndpoint(e.target.value)}} url={endpointUrl}/>
-          <CallButton submitCall={()=>{ fetchCall(endpointUrl).then((data) => { setResponse(data); }) }}/>
+      <Paper class={classes.topSec} elevation={3}>
+          <SelectMethod/>
+          <EndpointUrl/>
+          <CallButton submitCall={async()=>{ 
+            let data = await fetchCall(endPointUrl)
+            await apiCall('add-history', 'POST', {url:endPointUrl, id:user.uid, method:method})
+            setResponse(data)  
+          }}/>
           <AddQuery addQuery={()=>{setQueries([...queries, { key:'', value:'' }]);}} type={'Query'}/>
           <div className={classes.queries}>
-          {queries.map((query)=>{
-            const index = queries.indexOf(query)
+          {queries.map((query, index)=>{
             return (
               <Query
                 key={index}
@@ -95,20 +110,18 @@ function Dashboard({classes}){
               />
           )})}
           </div>
-        </div>
-      </div>
+        </Paper>
     )
   }
   const renderMidSec = () => {
     return(
-      <div className={classes.midSec}>
+      <Paper className={classes.midSec} elevation={3}>
         <HeaderBodyButton change={() => {setBodyOption(!bodyOption)}}/>
         {bodyOption ? (
           <div>
           <AddQuery addQuery={()=>{setHeaders([...headers, { key:'', value:'' }]);}} type={'Header'}/>
             <div className={classes.queries}>
-              {headers.map((header)=>{
-                const index = headers.indexOf(header)
+              {headers.map((header, index)=>{
                 return (
                   <Query
                     key={index}
@@ -120,12 +133,9 @@ function Dashboard({classes}){
               )})}
             </div>
           </div>
-        ):(<BodyTextArea
-              val={bodyValue}
-              setBody={(e) => {setBodyValue(e.target.value)}}
-            />
+        ):(<BodyTextArea/>
           )}
-      </div>
+      </Paper>
     )
   }
   const renderBottomSec = () => {
@@ -139,6 +149,8 @@ function Dashboard({classes}){
               return <BodyArea val={response.data}/>
             case 'HEADERS':
               return <div className={classes.resHeaders}><ResponseHeaders headers={response.headers}/></div>
+            default:
+              return
           }
         })()}
 
@@ -149,8 +161,8 @@ function Dashboard({classes}){
   return(
     <div>
       <div className={classes.root}>
-      {renderTopSec()}
-      {renderMidSec()}
+        {renderTopSec()}
+        {renderMidSec()}
       </div>
       {renderBottomSec()}
     </div>
