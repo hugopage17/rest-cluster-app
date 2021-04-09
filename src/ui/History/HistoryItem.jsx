@@ -4,8 +4,6 @@ import {setColor} from '../../api/SetColor.js'
 
 const styles = {
     root:{
-      borderTop:'1px solid rgba(20, 212, 255, 0.5)',
-      marginTop:'5px',
       color:'white',
       padding:'20px'
     },

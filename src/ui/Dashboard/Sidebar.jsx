@@ -4,23 +4,40 @@ import autoBind from 'react-autobind';
 import PropTypes from 'prop-types'
 import NoDataMessage from '../Components/NoDataMessage.jsx'
 import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
 import History from '../History/History.jsx'
 import WithLoading from '../Components/WithLoading.jsx'
+import {useState} from 'react'
 
 const FullHistory = ({classes, data}) => {
+  const [option, setOption] = useState(true)
+
   if(!data || data.length === 0){
     return(
       <div className={classes.msgBoard}><NoDataMessage msg={'History Record Empty'}/></div>
     )
   }
   return (
-    <div className={classes.content}>
-      <TextField id="outlined-basic" variant="outlined" size='small'
-        placeholder='Search...'
-        className={classes.searchBar}
-      />
-      <History history={data}/>
+    <div>
+      <div style={{width:'80%',margin:'auto', position:'absolute', left:'10%',top:'10%'}}>
+        <Typography onClick={()=>{setOption(true)}} className={classes[`left${option}`]}>History</Typography>
+        <Typography onClick={()=>{setOption(false)}} className={classes[`right${!option}`]}>Saved</Typography>
+      </div>
+      
+      {option ? (
+              <div className={classes.content}>
+              <div style={{borderBottom:'1px solid rgba(20, 212, 255, 0.5)', paddingBottom:'5px'}}>
+              <TextField id="outlined-basic" variant="outlined" size='small'
+                placeholder='Search...'
+                className={classes.searchBar}
+              />
+              </div>
+              
+              <History history={data}/>
+            </div> 
+            ) : (null)}
     </div>
+      
   )
 }
 
@@ -50,9 +67,37 @@ const styles = {
   },
   content:{
     position:'absolute',
-    top:'10%',
-    width:'100%'
-  }
+    top:'15%',
+    width:'100%',
+    borderBottom:'1px solid rgba(20, 212, 255, 0.5)',
+    paddingTop:'5px'
+  },
+  leftfalse:{
+    float:'left',
+    color:'white',
+    cursor:'pointer',
+    fontSize:'20px',
+  },
+  lefttrue:{
+    float:'left',
+    color:'white',
+    cursor:'pointer',
+    fontSize:'20px',
+    borderBottom:'1px solid rgba(20, 212, 255, 1)'
+  },
+  rightfalse:{
+    float:'right',
+    color:'white',
+    cursor:'pointer',
+    fontSize:'20px',
+  },
+  righttrue:{
+    float:'right',
+    color:'white',
+    cursor:'pointer',
+    fontSize:'20px',
+    borderBottom:'1px solid rgba(20, 212, 255, 1)'
+  },
 }
 
 class Sidebar extends Component{

@@ -7,6 +7,7 @@ import {useState} from 'react'
 import {apiCall} from '../../api/CallToAPI.js'
 import fire from '../../api/Fire.js'
 import {setData} from '../../api/SetDBData.js';
+import UploadPhoto from '../Components/UploadPhoto.jsx'
 
 const styles = {
     root:{
@@ -71,7 +72,11 @@ const Signup = ({classes}) => {
                     id="outlined-basic" variant="outlined" size='small'
                     onChange={(e) => {setEmail(e.target.value)}}
                 />
-                <TextField placeholder='Username' className={classes.input} id="outlined-basic" variant="outlined" size='small'
+                <TextField placeholder='Username' 
+                    className={classes.input} 
+                    id="outlined-basic" 
+                    variant="outlined" 
+                    size='small'
                     onChange={(e) => {setUsername(e.target.value)}}
                 />       
             </div>
@@ -85,6 +90,7 @@ const Signup = ({classes}) => {
                     onChange={(e) => {setConfirmPassword(e.target.value)}}
                 />
             </div>
+            <UploadPhoto/>
             <Button className={classes.button} onClick={signUp}>Sign Up</Button>
         </Paper>
     )

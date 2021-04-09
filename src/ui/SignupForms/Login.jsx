@@ -3,8 +3,10 @@ import { withStyles } from '@material-ui/styles'
 import SocialLogins from './SocialLogins.jsx'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
 import PropTypes from 'prop-types'
 import fire from '../../api/Fire.js'
+import {Link} from 'react-router-dom'
 import {useState} from 'react'
 
 const styles = {
@@ -59,6 +61,13 @@ const styles = {
         position:'relative',
         top:'30%',
         width:'100%'
+    },
+    bottomTag:{
+        color:'#14d4ff',
+        textAlign:'center',
+        position:'absolute',
+        bottom:'2%',
+        left:'35%'
     }
 }
 
@@ -79,6 +88,7 @@ const Login = ({classes}) => {
                 <Button className={classes.button} onClick={login}>Login</Button>
             </div>
             <span className={classes.socialLogins}><SocialLogins/></span>
+            <Link to='/signup' style={{textDecoration:'none'}}><Typography className={classes.bottomTag}>dont have an account</Typography></Link>
         </Paper>
     )
     

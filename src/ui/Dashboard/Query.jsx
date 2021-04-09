@@ -12,7 +12,24 @@ const style = {
     marginRight:20,
     '&:focus': {
             borderBottom:'1px solid #14d4ff'
-        }
+        },
+        '& label.Mui-focused': {
+          color: 'white',
+        },
+        '& .MuiInput-underline:after': {
+          borderBottomColor: '#14d4ff',
+        },
+        '& .MuiOutlinedInput-root': {
+          '& fieldset': {
+            borderColor: 'white',
+          },
+          '&:hover fieldset': {
+            borderColor: 'white',
+          },
+          '&.Mui-focused fieldset': {
+            borderColor: '#14d4ff',
+          },
+      }
   },
   button:{
     border:'1px solid #e8e8e8',
