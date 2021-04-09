@@ -2,9 +2,29 @@ import React,{Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import autoBind from 'react-autobind';
 import PropTypes from 'prop-types'
-import NoDataMessage from './components/NoDataMessage.jsx'
+import NoDataMessage from '../Components/NoDataMessage.jsx'
 import TextField from '@material-ui/core/TextField'
-import History from './History/History.jsx'
+import History from '../History/History.jsx'
+import WithLoading from '../Components/WithLoading.jsx'
+
+const FullHistory = ({classes, data}) => {
+  if(!data || data.length === 0){
+    return(
+      <div className={classes.msgBoard}><NoDataMessage msg={'History Record Empty'}/></div>
+    )
+  }
+  return (
+    <div className={classes.content}>
+      <TextField id="outlined-basic" variant="outlined" size='small'
+        placeholder='Search...'
+        className={classes.searchBar}
+      />
+      <History history={data}/>
+    </div>
+  )
+}
+
+const WithLoadingHistory = WithLoading(FullHistory)
 
 const styles = {
   root:{
@@ -43,7 +63,6 @@ class Sidebar extends Component{
 
   renderHistory(){
     const {classes, history} = this.props
-    console.log(history);
     if(!history || history.length === 0){
       return(
         <div className={classes.msgBoard}><NoDataMessage msg={'History Record Empty'}/></div>
@@ -61,10 +80,10 @@ class Sidebar extends Component{
   }
 
   render(){
-    const {classes} = this.props
+    const {classes, history} = this.props
     return(
       <div className={classes.root}>
-        {this.renderHistory()}
+        <WithLoadingHistory data={history} classes={classes} isLoading={history}/>
       </div>
     )
   }

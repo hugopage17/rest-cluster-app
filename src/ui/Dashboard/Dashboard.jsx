@@ -1,20 +1,20 @@
 import React,{useState} from 'react';
-import EndpointUrl from './components/EndpointUrl.jsx'
-import CallButton from './components/CallButton.jsx'
-import AddQuery from './components/AddQuery.jsx'
-import Query from './components/Query.jsx'
-import SelectMethod from './components/SelectMethod.jsx'
+import EndpointUrl from './EndpointUrl.jsx'
+import CallButton from './CallButton.jsx'
+import AddQuery from './AddQuery.jsx'
+import Query from './Query.jsx'
+import SelectMethod from './SelectMethod.jsx'
 import { withStyles } from '@material-ui/core/styles'
-import HeaderBodyButton from './components/HeaderBodyToggle.jsx'
-import BodyTextArea from './components/BodyTextArea.jsx'
-import BodyArea from './components/BodyArea.jsx'
-import ResponseStats from './components/ResponseStats.jsx'
-import BodyNav from './components/BodyNav.jsx'
-import ResponseHeaders from './components/ResponseHeaders.jsx'
-import {fetchCall} from '../api/FetchCall.js'
-import {apiCall} from '../api/CallToAPI.js'
+import HeaderBodyButton from './HeaderBodyToggle.jsx'
+import BodyTextArea from './BodyTextArea.jsx'
+import BodyArea from './BodyArea.jsx'
+import ResponseStats from './ResponseStats.jsx'
+import BodyNav from './BodyNav.jsx'
+import ResponseHeaders from './ResponseHeaders.jsx'
+import {fetchCall} from '../../api/FetchCall.js'
+import {apiCall} from '../../api/CallToAPI.js'
 import { useDispatch, useSelector  } from 'react-redux'
-import { queriesHandler, headersHandler, responseHandler } from '../redux/actions.js'
+import { queriesHandler, headersHandler, responseHandler } from '../../redux/actions.js'
 import Paper from '@material-ui/core/Paper'
 
 const styles = {
@@ -71,6 +71,7 @@ const styles = {
 function Dashboard({classes}){
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
+  const userData = useSelector(state => state.userData)
 
   const endPointUrl = useSelector((state) => state.url)
   const method = useSelector(state => state.method)
@@ -94,7 +95,7 @@ function Dashboard({classes}){
           <EndpointUrl/>
           <CallButton submitCall={async()=>{ 
             let data = await fetchCall(endPointUrl)
-            await apiCall('add-history', 'POST', {url:endPointUrl, id:user.uid, method:method})
+            await apiCall('add-history', 'POST', {url:endPointUrl, id:user.uid, method:method}, userData.accessToken)
             setResponse(data)  
           }}/>
           <AddQuery addQuery={()=>{setQueries([...queries, { key:'', value:'' }]);}} type={'Query'}/>

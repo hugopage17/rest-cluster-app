@@ -1,12 +1,12 @@
 import React,{Component} from 'react'
-import SocialLogins from './components/SocialLogins.jsx'
+import SocialLogins from '../SignupForms/SocialLogins.jsx'
 import { withStyles } from '@material-ui/styles'
 import PropTypes from 'prop-types'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 import { Typography } from '@material-ui/core'
-import {googleLogin, githubLogin} from '../api/SocialLogin.js'
-import {setData} from '../api/SetDBData.js';
+import {googleLogin, githubLogin} from '../../api/SocialLogin.js'
+import {setData} from '../../api/SetDBData.js';
 import autoBind from 'react-autobind';
 import { Link } from 'react-router-dom'
 

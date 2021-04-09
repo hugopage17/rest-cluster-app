@@ -4,9 +4,9 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import PropTypes from 'prop-types'
 import {useState} from 'react'
-import {apiCall} from '../api/CallToAPI.js'
-import fire from '../api/Fire.js'
-import {setData} from '../api/SetDBData.js';
+import {apiCall} from '../../api/CallToAPI.js'
+import fire from '../../api/Fire.js'
+import {setData} from '../../api/SetDBData.js';
 
 const styles = {
     root:{
