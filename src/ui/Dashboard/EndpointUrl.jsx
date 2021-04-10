@@ -6,7 +6,7 @@ import { useDispatch, useSelector} from 'react-redux'
 
 const styles = {
   root:{
-    width:'80%',
+    width:'75%',
     '&:focus': {
       borderRadius: 4,
       borderColor: '#80bdff',

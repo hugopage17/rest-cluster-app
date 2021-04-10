@@ -1,6 +1,7 @@
 import React,{useState} from 'react';
 import EndpointUrl from './EndpointUrl.jsx'
 import CallButton from './CallButton.jsx'
+import SaveButton from './SaveButton.jsx'
 import AddQuery from './AddQuery.jsx'
 import Query from './Query.jsx'
 import SelectMethod from './SelectMethod.jsx'
@@ -16,6 +17,10 @@ import {apiCall} from '../../api/CallToAPI.js'
 import { useDispatch, useSelector  } from 'react-redux'
 import { queriesHandler, headersHandler, responseHandler } from '../../redux/actions.js'
 import Paper from '@material-ui/core/Paper'
+import DialogWindow from '../Popups/DialogWindow.jsx'
+import SavePanel from '../Popups/SavePanel.jsx'
+import SuccessMessage from '../Components/SuccessMessage.jsx'
+
 
 const styles = {
   root:{
@@ -88,6 +93,11 @@ function Dashboard({classes}){
   const response = useSelector(state => state.response)
   const [responeSec, setResSec] = useState('BODY')
 
+  const [savePanel, openSavePanel] = useState(false)
+  const [saveName, setSaveName] = useState('')
+  const [descName, setDescName] = useState('')
+  const [saveComplete, saving] = useState(false)
+
   const renderTopSec = () => {
     return(
       <Paper class={classes.topSec} elevation={3}>
@@ -95,9 +105,10 @@ function Dashboard({classes}){
           <EndpointUrl/>
           <CallButton submitCall={async()=>{ 
             let data = await fetchCall(endPointUrl, queries, method, headers)
-            await apiCall('add-history', 'POST', {url:endPointUrl, id:user.uid, method:method}, userData.accessToken)
+            await apiCall('add-history', 'POST', {url:endPointUrl, id:user.uid, method:method, headers:headers}, userData.accessToken)
             setResponse(data)  
           }}/>
+          <SaveButton open={() => {openSavePanel(!savePanel)}}/>
           <AddQuery addQuery={()=>{setQueries([...queries, { key:'', value:'' }]);}} type={'Query'}/>
           <div className={classes.queries}>
           {queries.map((query, index)=>{
@@ -123,15 +134,20 @@ function Dashboard({classes}){
           <AddQuery addQuery={()=>{setHeaders([...headers, { key:'', value:'' }]);}} type={'Header'}/>
             <div className={classes.queries}>
               {headers.map((header, index)=>{
-                return (
-                  <Query
-                      key={index}
-                      query={header}
-                      handleKey={(e)=>{ headers[index].key = e.target.value; setHeaders([...headers]);}}
-                      handleVal={(e)=>{ headers[index].value = e.target.value; setHeaders([...headers]);}}
-                      deleteQuery={()=>{ setHeaders([].concat(headers.filter((h)=> { return h !== header }))) }}
-                    />  
-              )})}
+                  return (
+                    <Query
+                        autocomplete={true}
+                        key={index}
+                        query={header}
+                        handleKey={(e)=>{ headers[index].key = e.target.value; setHeaders([...headers]);}}
+                        handleVal={(e)=>{ headers[index].value = e.target.value; setHeaders([...headers]);}}
+                        autoKey={(e, value)=>{ headers[index].key = value; setHeaders([...headers]);}}
+                        autoVal={(e, value)=>{ headers[index].value = value; setHeaders([...headers]);}}
+                        deleteQuery={()=>{ setHeaders([].concat(headers.filter((h)=> { return h !== header }))) }}
+                      />
+                )
+                   
+                })}
             </div>
           </div>
         ):(<BodyTextArea/>
@@ -161,6 +177,25 @@ function Dashboard({classes}){
 
   return(
     <div>
+      <DialogWindow 
+        open={savePanel} 
+        toggle={() => {openSavePanel(!savePanel)}}
+        title={'Save Request'} 
+        component={
+          saveComplete ?(
+            <SavePanel 
+            name={saveName}
+            desc={descName}
+            setName={(e) => {setSaveName(e.target.value)}}
+            setDesc={(e) => {setDescName(e.target.value)}}
+            save={()=>{
+              apiCall('save-request', 'POST', {url:endPointUrl, id:user.uid, method:method, headers:headers, name:saveName, desc:descName}, userData.accessToken)
+                .then(() => {saving(!saveComplete)})
+            }}
+          />
+          ):(<SuccessMessage msg={'New request saved'}/>)
+        }
+      />
       <div className={classes.root}>
         {renderTopSec()}
         {renderMidSec()}

@@ -17,7 +17,7 @@ const styles = {
         borderRadius:'5px',
         padding:'5px'
     }
-  }
+}
 
 const HistoryItem = ({classes, data}) => {
     const color = setColor(data.meth)

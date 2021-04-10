@@ -9,7 +9,7 @@ import History from '../History/History.jsx'
 import Saved from '../SavedRequests/Saved.jsx'
 import WithLoading from '../Components/WithLoading.jsx'
 
-const FullHistory = ({classes, data}) => {
+const HistoryPanel = ({classes, data}) => {
   if(!data || data.length === 0){
     return(
       <div className={classes.msgBoard}><NoDataMessage msg={'History Record Empty'}/></div>
@@ -30,7 +30,7 @@ const FullHistory = ({classes, data}) => {
   )
 }
 
-const FullSaved = ({classes, data}) => {
+const SavedPanel = ({classes, data}) => {
   if(!data || data.length === 0){
     return(
       <div className={classes.msgBoard}><NoDataMessage msg={'No Saved Requests'}/></div>
@@ -51,8 +51,8 @@ const FullSaved = ({classes, data}) => {
   )
 }
 
-const WithLoadingHistory = WithLoading(FullHistory)
-const WithLoadingSaved = WithLoading(FullSaved)
+const WithLoadingHistory = WithLoading(HistoryPanel)
+const WithLoadingSaved = WithLoading(SavedPanel)
 
 const styles = {
   root:{
