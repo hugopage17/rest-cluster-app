@@ -5,7 +5,8 @@ import {setColor} from '../../api/SetColor.js'
 const styles = {
     root:{
       color:'white',
-      padding:'20px'
+      padding:'20px',
+      borderBottom:'1px solid rgba(20, 212, 255, 0.5)',
     },
     url:{
         display:'inline-block',

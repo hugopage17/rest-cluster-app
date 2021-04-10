@@ -1,8 +1,14 @@
 import React from 'react';
+import LoadingData from './LoadingData.jsx'
+
 function WithLoading(Component) {
   return function WihLoadingComponent({ isLoading, ...props }) {
     if (isLoading) return (<Component {...props} />);
-    return (<p style={{color:'white',position:'absolute', top:'5%', left:'25%', textAlign:'center'}}>Loading History</p>);
+    return (
+      <div style={{position:'absolute', top:'15%', left:'10%'}}>
+        <LoadingData/>
+      </div>
+    );
   }
 }
 export default WithLoading;

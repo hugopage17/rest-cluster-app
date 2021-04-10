@@ -61,7 +61,7 @@ function App({classes}) {
                 <Route path={`/id=${user.uid}`} exact>
                 <div>
                   <Navbar dom={<NavDash user={user} logout={()=>{fire.auth().signOut()}}/>} />
-                  <Sidebar history={(userData && userData.history) ? userData.history : null}/>
+                  <Sidebar history={(userData && userData.history) ? userData.history : null} saved={(userData && userData.savedRequests)}/>
                   <Dashboard/>
                 </div>
               </Route>):

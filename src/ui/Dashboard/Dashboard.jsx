@@ -94,7 +94,7 @@ function Dashboard({classes}){
           <SelectMethod/>
           <EndpointUrl/>
           <CallButton submitCall={async()=>{ 
-            let data = await fetchCall(endPointUrl)
+            let data = await fetchCall(endPointUrl, queries, method, headers)
             await apiCall('add-history', 'POST', {url:endPointUrl, id:user.uid, method:method}, userData.accessToken)
             setResponse(data)  
           }}/>
@@ -125,12 +125,12 @@ function Dashboard({classes}){
               {headers.map((header, index)=>{
                 return (
                   <Query
-                    key={index}
-                    query={header}
-                    handleKey={(e)=>{ headers[index].key = e.target.value; setHeaders([...headers]);}}
-                    handleVal={(e)=>{ headers[index].value = e.target.value; setHeaders([...headers]);}}
-                    deleteQuery={()=>{ setHeaders([].concat(headers.filter((h)=> { return h !== header }))) }}
-                  />
+                      key={index}
+                      query={header}
+                      handleKey={(e)=>{ headers[index].key = e.target.value; setHeaders([...headers]);}}
+                      handleVal={(e)=>{ headers[index].value = e.target.value; setHeaders([...headers]);}}
+                      deleteQuery={()=>{ setHeaders([].concat(headers.filter((h)=> { return h !== header }))) }}
+                    />  
               )})}
             </div>
           </div>
