@@ -1,13 +1,13 @@
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline'
-import { withStyles } from '@material-ui/core/styles'
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import { withStyles } from '@material-ui/styles';
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 
 const styles = {
-    successIcon:{
+    failIcon:{
         fontSize:254,
         width:'100%',
-        color:'#37f056'
+        color:'#fa255e'
     },
     msg:{
         fontSize:'28px',
@@ -21,14 +21,14 @@ const styles = {
     }
 }
 
-const SuccessMessage = ({classes, msg, next}) => {
+const ErrorMessage = ({classes, msg, next}) => {
     return(
         <div>
-            <CheckCircleOutlineIcon className={classes.successIcon}/>
+            <ErrorOutlineIcon className={classes.failIcon}/>
             <Typography className={classes.msg}>{msg}</Typography>
             <Button className={classes.button} onClick={next}>Continue</Button>
-        </div>       
+        </div>      
     )
 }
 
-export default withStyles(styles)(SuccessMessage)
+export default withStyles(styles)(ErrorMessage)

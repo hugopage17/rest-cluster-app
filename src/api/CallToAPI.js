@@ -4,5 +4,7 @@ export const apiCall = (path, method, body, token) => {
     "Content-Type":"application/json",
     "Authorization": `Bearer ${token}`
   }
-  return fetch(`http://localhost:5000/${path}`, {method:method, body:JSON.stringify(body), headers:headers, mode:'cors'}).then(res => res.json()).then(data => {return data}).catch(err => {return err})
+  return fetch(`http://localhost:5000/${path}`, {method:method, body:JSON.stringify(body), headers:headers, mode:'cors'})
+    .then(res => res.json()).then(data => {return data})
+    .catch(err => {console.log(err); throw err})
 }

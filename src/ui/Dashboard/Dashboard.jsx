@@ -18,8 +18,10 @@ import { useDispatch, useSelector  } from 'react-redux'
 import { queriesHandler, headersHandler, responseHandler } from '../../redux/actions.js'
 import Paper from '@material-ui/core/Paper'
 import DialogWindow from '../Popups/DialogWindow.jsx'
-import SavePanel from '../Popups/SavePanel.jsx'
-import SuccessMessage from '../Components/SuccessMessage.jsx'
+import SaveDialog from '../SavedRequests/SavedDialog.jsx'
+import ErrorMessage from '../Errors/ErrorMessage.jsx'
+import Loader from '../Components/Loader.jsx'
+import { mapQueries } from '../../api/MapQueries.js';
 
 
 const styles = {
@@ -88,6 +90,7 @@ function Dashboard({classes}){
   const headers = useSelector(state => state.headers)
 
   const [bodyOption, setBodyOption] = useState(true)
+  const body = useSelector(state => state.body)
 
   const setResponse = res => dispatch(responseHandler(res))
   const response = useSelector(state => state.response)
@@ -96,22 +99,36 @@ function Dashboard({classes}){
   const [savePanel, openSavePanel] = useState(false)
   const [saveName, setSaveName] = useState('')
   const [descName, setDescName] = useState('')
-  const [saveComplete, saving] = useState(false)
+  const [saveComplete, saving] = useState('IN_PROGRESS')
+
+  const [isError, setError] = useState({val:false, msg:''})
+
+  const [loading, setLoader] = useState(false)
+
 
   const renderTopSec = () => {
     return(
       <Paper class={classes.topSec} elevation={3}>
           <SelectMethod/>
-          <EndpointUrl/>
-          <CallButton submitCall={async()=>{ 
-            let data = await fetchCall(endPointUrl, queries, method, headers)
-            await apiCall('add-history', 'POST', {url:endPointUrl, id:user.uid, method:method, headers:headers}, userData.accessToken)
-            setResponse(data)  
+          <EndpointUrl 
+            queries={queries}
+            history={userData.history && [].concat(userData.history.reverse().slice(0,5).map(i => {return `${i.url}`}))}
+          />
+          <CallButton submitCall={async()=>{
+            setLoader(true)
+            try{
+              let data = await fetchCall(endPointUrl, queries, method, headers)
+              setResponse(data)  
+              await apiCall('add-history', 'POST', {url:endPointUrl, id:user.uid, method:method, headers:headers, response:response, body:body, queries:queries}, userData.accessToken)
+            }catch(e){
+              setError({val:true, msg:e.message})
+            }
+            setLoader(false)
           }}/>
-          <SaveButton open={() => {openSavePanel(!savePanel)}}/>
+          <SaveButton open={() => {openSavePanel(!savePanel)}}/><br/>
           <AddQuery addQuery={()=>{setQueries([...queries, { key:'', value:'' }]);}} type={'Query'}/>
           <div className={classes.queries}>
-          {queries.map((query, index)=>{
+          {queries && queries.map((query, index)=>{
             return (
               <Query
                 key={index}
@@ -125,6 +142,7 @@ function Dashboard({classes}){
         </Paper>
     )
   }
+
   const renderMidSec = () => {
     return(
       <Paper className={classes.midSec} elevation={3}>
@@ -155,6 +173,7 @@ function Dashboard({classes}){
       </Paper>
     )
   }
+
   const renderBottomSec = () => {
     return(
       <div className={classes.bottomSec}>
@@ -176,32 +195,50 @@ function Dashboard({classes}){
   }
 
   return(
-    <div>
-      <DialogWindow 
-        open={savePanel} 
-        toggle={() => {openSavePanel(!savePanel)}}
-        title={'Save Request'} 
-        component={
-          saveComplete ?(
-            <SavePanel 
-            name={saveName}
-            desc={descName}
-            setName={(e) => {setSaveName(e.target.value)}}
-            setDesc={(e) => {setDescName(e.target.value)}}
-            save={()=>{
-              apiCall('save-request', 'POST', {url:endPointUrl, id:user.uid, method:method, headers:headers, name:saveName, desc:descName}, userData.accessToken)
-                .then(() => {saving(!saveComplete)})
-            }}
+        <div>
+          {loading ? <Loader/> : null}
+          <DialogWindow 
+            open={savePanel} 
+            title={'Save Request'} 
+            component={
+              <SaveDialog
+                close={() => {openSavePanel(!savePanel)}}
+                saveComplete={saveComplete}
+                saveName={saveName}
+                descName={descName}
+                nameSetter={(e) => { setSaveName(e.target.value) }}
+                descSetter={(e) => {setDescName(e.target.value)}}
+                runSave={()=>{
+                  apiCall('save-request', 'POST', {url:endPointUrl, id:user.uid, method:method, headers:headers, response:response, body:body, queries:queries, name:saveName, desc:descName}, userData.accessToken)
+                    .then(() => {saving('SAVE_COMPLETE')})
+                    .catch((e) => {saving('SAVE_ERROR') })
+                }}
+                nextCallBack={()=>{
+                  openSavePanel(!savePanel)
+                  setSaveName('')
+                  setDescName('')
+                  setTimeout(()=>{
+                    saving('IN_PROGRESS')
+                  },100)              
+                }}
+              />
+            }
           />
-          ):(<SuccessMessage msg={'New request saved'}/>)
-        }
-      />
-      <div className={classes.root}>
-        {renderTopSec()}
-        {renderMidSec()}
-      </div>
-      {renderBottomSec()}
-    </div>
+          <DialogWindow 
+            title={'Error on Request'} 
+            component={
+              <ErrorMessage 
+                msg={isError ? isError.msg : ''}
+                next={()=>{setError({val:false, msg:''})}}/>} 
+                open={isError.val}
+          />
+          
+          <div className={classes.root}>
+            {renderTopSec()}
+            {renderMidSec()}
+          </div>
+          {renderBottomSec()}
+        </div>
   )
 }
 

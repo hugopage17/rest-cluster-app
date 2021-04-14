@@ -50,7 +50,8 @@ const Query = ({query, handleKey, handleVal, deleteQuery, classes, autocomplete,
           onChange={autoKey}
           id="combo-box-demo"
           options={headerNames}
-          renderInput={(params) => <TextField {...params} placeholder='Key' onChange={handleKey} value={query.key} className={classes.input} id='header-key'/> } 
+          renderInput={(params) => <TextField {...params} placeholder='Key' 
+          onChange={handleKey} value={query.key} className={classes.input} id='header-key'/> } 
         /> 
         <Autocomplete
           style={{display:'inline'}}

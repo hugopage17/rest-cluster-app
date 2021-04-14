@@ -8,6 +8,9 @@ import Typography from '@material-ui/core/Typography'
 import History from '../History/History.jsx'
 import Saved from '../SavedRequests/Saved.jsx'
 import WithLoading from '../Components/WithLoading.jsx'
+import { Button } from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
+import {apiCall} from '../../api/CallToAPI.js'
 
 const HistoryPanel = ({classes, data}) => {
   if(!data || data.length === 0){
@@ -116,6 +119,21 @@ const styles = {
     textAlign:'center',
     transition:'0.5s'
   },
+  bottom:{
+    position:'absolute',
+    bottom:'0%',
+    display:'grid',
+    gridTemplateColumns:'1fr',
+    borderTop:'1px solid #14d4ff',
+    width:'100%',
+    backgroundColor:'#4d4d4d',
+    height:'5vh'
+  },
+  bottomButtons:{
+    color:'white',
+    textTransform: 'none',
+    borderRight:'1px solid rgba(20, 212, 255, 0.5)'
+  }
 }
 
 class Sidebar extends Component{
@@ -127,8 +145,18 @@ class Sidebar extends Component{
     }
   }
 
+  async deleteHistory(id){
+    const call = await apiCall('delete-history', 'DELETE', {id:id})
+    return call
+  }
+
+  async deleteSavedRequests(id){
+    const call = await apiCall('delete-saved', 'DELETE', {id:id})
+    return call
+  }
+
   render(){
-    const {classes, history, saved} = this.props
+    const {classes, history, saved, id} = this.props
     const {option} = this.state
     return(
         <div className={classes.root}>
@@ -147,6 +175,14 @@ class Sidebar extends Component{
             isLoading={saved}
           />
         )}
+        <div className={classes.bottom}>
+          <Button 
+            className={classes.bottomButtons} 
+            onClick={option ? ()=>{this.deleteHistory(id)}: (() => {this.deleteSavedRequests(id)}) }
+            disabled={option ? history && history.length === 0 ? true : false : saved && saved.length === 0 ? true : false}
+          >Delete All 
+          <DeleteIcon/></Button>
+        </div>
       </div>
     )
   }

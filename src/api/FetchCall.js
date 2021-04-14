@@ -13,7 +13,11 @@ export const fetchCall = async(url, queries, method, headersData, body) => {
     })
   }
   var headers = new Headers()
-  forLoop(headersData, (i) => { headers.append(headersData[i].key, headersData[i].value) })
+  forLoop(headersData, (i) => {
+    if(headersData.key && headersData.value){
+      headers.append(headersData[i].key, headersData[i].value) 
+    }
+  })
   let config = {method:method, headers:headers}
   if(method === 'POST'){
     config['body'] = body
@@ -24,6 +28,6 @@ export const fetchCall = async(url, queries, method, headersData, body) => {
     call.headers.forEach((val, key) => { arr.push({val, key}) })
     const data = await call.json()
     return {res:call, data: JSON.stringify(data, null, 2), headers:arr}
-  }catch(err){ return err }
+  }catch(err){ throw err }
 
 }

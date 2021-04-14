@@ -18,17 +18,25 @@ import HomeNav from './ui/Navbar/HomeNav.jsx'
 import { Provider } from 'react-redux'
 import {store} from './redux'
 import { useDispatch, useSelector  } from 'react-redux'
-import {handleUser, handleAppData} from './redux/actions'
+import {handleUser, handleAppData, endpointHandler, setMethod, queriesHandler, headersHandler, responseHandler, bodyHandler} from './redux/actions'
 import {useState} from 'react'
+import DropZone from './ui/Components/DropZone.jsx'
 
 
 function App({classes}) {
   const dispatch = useDispatch()
+  const setUrl = url => dispatch(endpointHandler(url))
+  const selectMethod = method => dispatch(setMethod(method))
+  const setQueries = queries => dispatch(queriesHandler(queries))
+  const setHeaders = headers => dispatch(headersHandler(headers))
+  const setResponse = res => dispatch(responseHandler(res))
+  const setBody = body => dispatch(bodyHandler(body))
   const setUser = (user) => dispatch(handleUser(user))
   const setUserData = (data) => dispatch(handleAppData(data))
   const user = useSelector((state) => state.user)
   const userData = useSelector((state) => state.userData)
   const [loaded, setLoading] = useState(false)
+  const [droppingItem, setDrop] = useState(false)
 
   useEffect(()=>{ authListener() },[])
 
@@ -50,6 +58,29 @@ function App({classes}) {
     })
   }
 
+  const drop = e => {
+    e.preventDefault()
+    const historyItem = e.dataTransfer.getData('history_item')
+    const request = JSON.parse(historyItem)
+    setUrl(request.url)
+    selectMethod(request.method)
+    setHeaders(request.headers)
+    setQueries(request.queries)
+    setResponse(request.response)
+    setBody(request.body)
+    setDrop(false)
+  }
+
+  const dragOver = e => {
+    e.preventDefault()
+    setDrop(true)
+  }
+
+  const dragLeave = e => {
+    e.preventDefault()
+    setDrop(false)
+  }
+
   return (
     
       <BrowserRouter>
@@ -61,8 +92,14 @@ function App({classes}) {
                 <Route path={`/id=${user.uid}`} exact>
                 <div>
                   <Navbar dom={<NavDash user={user} logout={()=>{fire.auth().signOut()}}/>} />
-                  <Sidebar history={(userData && userData.history) ? userData.history : null} saved={(userData && userData.savedRequests)}/>
-                  <Dashboard/>
+                  <Sidebar 
+                    history={(userData && userData.history) ? userData.history : null} 
+                    saved={(userData && userData.savedRequests)}
+                    id={user ? user.uid : ''}
+                  />
+                  <div  onDrop={drop} onDragOver={dragOver} onDragLeave={dragLeave}>
+                    {!droppingItem ? (<Dashboard/>):(<DropZone/>)}     
+                  </div>
                 </div>
               </Route>):
               (<Route path='/' exact>
