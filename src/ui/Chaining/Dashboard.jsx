@@ -1,6 +1,6 @@
 
 
-function Dashboard(){
+function Dashboard({classes, savedRequests, createdChains}){
     return(
 
     )
